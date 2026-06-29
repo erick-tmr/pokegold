@@ -1,25 +1,10 @@
 StopRTC: ; unreferenced
-	ld a, RAMG_SRAM_ENABLE
-	ld [rRAMG], a
-	call LatchClock
-	ld a, RAMB_RTC_DH
-	ld [rRAMB], a
-	ld a, [rRTCREG]
-	set B_RAMB_RTC_DH_HALT, a
-	ld [rRTCREG], a
-	call CloseSRAM
+; No real-time clock on this hardware; nothing to stop.
 	ret
 
 StartRTC:
-	ld a, RAMG_SRAM_ENABLE
-	ld [rRAMG], a
-	call LatchClock
-	ld a, RAMB_RTC_DH
-	ld [rRAMB], a
-	ld a, [rRTCREG]
-	res B_RAMB_RTC_DH_HALT, a
-	ld [rRTCREG], a
-	call CloseSRAM
+; No real-time clock on this hardware; nothing to start. (Poking the RTC_DH
+; selector here would select an SRAM bank and write into save data.)
 	ret
 
 GetTimeOfDay::
@@ -74,15 +59,11 @@ StageRTCTimeForSave:
 	ret
 
 SaveRTC:
-	ld a, RAMG_SRAM_ENABLE
-	ld [rRAMG], a
-	call LatchClock
-	ld hl, rRTCREG
-	ld a, RAMB_RTC_DH
-	ld [rRAMB], a
-	res B_RAMB_RTC_DH_CARRY, [hl]
+; Originally cleared the RTC day-carry bit then reset sRTCStatusFlags. With no
+; real-time clock, only the flag reset remains; the day-carry poke is dropped
+; (it wrote to $a000 after an RTC_DH select -> SRAM bank -> save corruption).
 	ld a, BANK(sRTCStatusFlags)
-	ld [rRAMB], a
+	call OpenSRAM
 	xor a
 	ld [sRTCStatusFlags], a
 	call CloseSRAM

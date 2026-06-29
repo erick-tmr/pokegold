@@ -187,7 +187,7 @@ $(foreach obj, $(silver_vc_excl_obj), \
 endif
 
 
-RGBFIXFLAGS += -cjsv -k 01 -l 0x33 -m MBC3+TIMER+RAM+BATTERY -r 3 -p 0
+RGBFIXFLAGS += -cjsv -k 01 -l 0x33 -m MBC5+RAM+BATTERY -r 3 -p 0
 pokegold.gbc:         RGBFIXFLAGS += -t POKEMON_GLD -i AAUE
 pokesilver.gbc:       RGBFIXFLAGS += -t POKEMON_SLV -i AAXE
 pokegold_debug.gbc:   RGBFIXFLAGS += -t POKEMON_GLD -i AAUE
