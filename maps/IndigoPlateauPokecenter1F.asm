@@ -130,7 +130,9 @@ PlateauRivalPostBattle:
 	disappear INDIGOPLATEAUPOKECENTER1F_RIVAL
 	setscene SCENE_INDIGOPLATEAUPOKECENTER1F_RIVAL_BATTLE
 	playmapmusic
-	setflag ENGINE_INDIGO_PLATEAU_RIVAL_FIGHT
+	; No RTC: don't record the once-per-day flag, so the rival rematch can be
+	; repeated by re-entering the map (the Mon/Wed weekday gate above still applies).
+	; setflag ENGINE_INDIGO_PLATEAU_RIVAL_FIGHT
 PlateauRivalScriptDone:
 	end
 

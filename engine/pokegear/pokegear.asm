@@ -453,6 +453,24 @@ PokegearClock_Init:
 
 PokegearClock_Joypad:
 	call .UpdateClock
+; Hold SELECT + press UP opens the time-edit UI. While SELECT is held the
+; normal quit-on-button path is suppressed so the player can arm the combo.
+	ldh a, [hJoyDown]
+	ld b, a
+	and PAD_SELECT
+	jr z, .no_select_combo
+	ld a, b
+	and PAD_UP
+	jr z, .select_held_no_up
+	farcall PokegearClock_EditTime
+	xor a ; POKEGEARSTATE_CLOCKINIT — forces tilemap redraw next loop iteration
+	ld [wJumptableIndex], a
+	ret
+
+.select_held_no_up
+	ret
+
+.no_select_combo
 	ld hl, hJoyLast
 	ld a, [hl]
 	and PAD_BUTTONS

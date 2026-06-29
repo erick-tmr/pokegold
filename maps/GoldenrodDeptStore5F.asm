@@ -75,7 +75,9 @@ GoldenrodDeptStore5FReceptionistScript:
 	promptbutton
 	verbosegiveitem TM_RETURN
 	iffalse .Done
-	setflag ENGINE_GOLDENROD_DEPT_STORE_TM27_RETURN
+	; No RTC: don't record the once-per-day flag, so the TM is available again on
+	; the next visit (it's still Sunday-only via the VAR_WEEKDAY check above).
+	; setflag ENGINE_GOLDENROD_DEPT_STORE_TM27_RETURN
 	closetext
 	end
 
@@ -90,7 +92,9 @@ GoldenrodDeptStore5FReceptionistScript:
 	promptbutton
 	verbosegiveitem TM_FRUSTRATION
 	iffalse .Done
-	setflag ENGINE_GOLDENROD_DEPT_STORE_TM27_RETURN
+	; No RTC: don't record the once-per-day flag, so the TM is available again on
+	; the next visit (it's still Sunday-only via the VAR_WEEKDAY check above).
+	; setflag ENGINE_GOLDENROD_DEPT_STORE_TM27_RETURN
 	closetext
 	end
 

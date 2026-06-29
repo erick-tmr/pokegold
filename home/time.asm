@@ -4,11 +4,8 @@ Timer:: ; unreferenced
 	reti
 
 LatchClock::
-; latch clock counter data
-	ld a, 0
-	ld [rRTCLATCH], a
-	ld a, 1
-	ld [rRTCLATCH], a
+; No real-time clock on this hardware (RTC-less MBC5).
+; Latching would poke the MBC3 clock register; do nothing.
 	ret
 
 UpdateTime::
@@ -20,42 +17,18 @@ UpdateTime::
 
 GetClock::
 ; store clock data in hRTCDayHi-hRTCSeconds
-
-; enable clock r/w
-	ld a, RAMG_SRAM_ENABLE
-	ld [rRAMG], a
-
-; clock data is 'backwards' in hram
-
-	call LatchClock
-	ld hl, rRAMB
-	ld de, rRTCREG
-
-	ld [hl], RAMB_RTC_S
-	ld a, [de]
-	maskbits 60
+;
+; This hardware has no real-time clock. Reading the MBC3 clock registers here
+; would actually select an SRAM bank ($08-$0c -> bank 0-4) and read box data as
+; if it were the time (corrupting the time and, on write, Box 8). Instead return
+; a frozen zero clock: the displayed time becomes exactly the wStart* offsets set
+; by the player in the clock-setting UI (see FixTime), and never drifts on its own.
+	xor a
 	ldh [hRTCSeconds], a
-
-	ld [hl], RAMB_RTC_M
-	ld a, [de]
-	maskbits 60
 	ldh [hRTCMinutes], a
-
-	ld [hl], RAMB_RTC_H
-	ld a, [de]
-	maskbits 24
 	ldh [hRTCHours], a
-
-	ld [hl], RAMB_RTC_DL
-	ld a, [de]
 	ldh [hRTCDayLo], a
-
-	ld [hl], RAMB_RTC_DH
-	ld a, [de]
 	ldh [hRTCDayHi], a
-
-; unlatch clock / disable clock r/w
-	call CloseSRAM
 	ret
 
 FixDays::
@@ -203,50 +176,10 @@ ClearClock::
 	ret
 
 SetClock::
-; set clock data from hram
-
-; enable clock r/w
-	ld a, RAMG_SRAM_ENABLE
-	ld [rRAMG], a
-
-; set clock data
-; stored 'backwards' in hram
-
-	call LatchClock
-	ld hl, rRAMB
-	ld de, rRTCREG
-
-; seems to be a halt check that got partially commented out
-; this block is totally pointless
-	ld [hl], RAMB_RTC_DH
-	ld a, [de]
-	bit B_RAMB_RTC_DH_HALT, a
-	ld [de], a
-
-; seconds
-	ld [hl], RAMB_RTC_S
-	ldh a, [hRTCSeconds]
-	ld [de], a
-; minutes
-	ld [hl], RAMB_RTC_M
-	ldh a, [hRTCMinutes]
-	ld [de], a
-; hours
-	ld [hl], RAMB_RTC_H
-	ldh a, [hRTCHours]
-	ld [de], a
-; day lo
-	ld [hl], RAMB_RTC_DL
-	ldh a, [hRTCDayLo]
-	ld [de], a
-; day hi
-	ld [hl], RAMB_RTC_DH
-	ldh a, [hRTCDayHi]
-	res B_RAMB_RTC_DH_HALT, a ; make sure timer is active
-	ld [de], a
-
-; cleanup
-	call CloseSRAM ; unlatch clock, disable clock r/w
+; No real-time clock on this hardware. Writing the clock here would select an
+; SRAM bank via the RTC register selectors ($08-$0c) and clobber save data
+; (RTC_DL=$0b -> SRAM bank 3 -> start of Box 8). Do nothing; the software clock
+; lives entirely in the wStart* offsets set through the clock UI.
 	ret
 
 ClearRTCStatus:: ; unreferenced

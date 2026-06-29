@@ -27,7 +27,9 @@ DaisyScript:
 	special DaisysGrooming
 	ifequal $0, .Refused
 	ifequal $1, .CantGroomEgg
-	setflag ENGINE_DAISYS_GROOMING
+	; No RTC: don't record the once-per-day flag, so Daisy's grooming can be
+	; repeated (it's still only offered at 3 PM via the VAR_HOUR check above).
+	; setflag ENGINE_DAISYS_GROOMING
 	writetext DaisyAlrightText
 	waitbutton
 	closetext
