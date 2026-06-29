@@ -2,6 +2,11 @@
 
 This is a disassembly of Pokémon Gold and Pokémon Silver.
 
+> **Timeless fork:** this build removes the real-time clock so in-game time is
+> *frozen* — it only ever changes when you set it yourself. Daily freebies are made
+> always-available, and you can re-open the clock-setting screen any time from the
+> Pokégear. See [TIMELESS.md](TIMELESS.md) for details.
+
 It builds the following ROMs:
 
 - Pokemon - Gold Version (UE) [C][!].gbc `sha1: d8b8a3600a465308c9953dfa04f0081c05bdcb94`
